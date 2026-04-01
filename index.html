@@ -9,10 +9,6 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Lato', sans-serif; background: #fafafa; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
     .wrap { width: 100%; max-width: 640px; }
-    .brand { text-align: center; margin-bottom: 2.5rem; }
-    .brand-sub { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
-    .brand-name { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: #111; line-height: 1; }
-    .brand-divider { width: 40px; height: 1px; background: #ccc; margin: 12px auto 0; }
     .progress { display: flex; gap: 6px; margin-bottom: 2rem; }
     .prog-dot { flex: 1; height: 2px; background: #e0e0e0; border-radius: 2px; transition: background 0.3s; }
     .prog-dot.active { background: #111; }
@@ -49,109 +45,13 @@
     .btn-restart { width: 100%; padding: 12px; background: none; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 11px; color: #999; cursor: pointer; font-family: 'Lato', sans-serif; letter-spacing: 2px; text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
     .btn-restart:hover { border-color: #bbb; color: #555; }
     .summary-note { font-size: 11px; color: #aaa; text-align: center; line-height: 1.7; margin-top: 12px; }
-    @media (max-width: 480px) { .cards.three { grid-template-columns: 1fr 1fr; } .brand-name { font-size: 2.2rem; } }
+    @media (max-width: 480px) { .cards.three { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="brand">
-    <div class="brand-sub">Style Selector</div>
-    <div class="brand-name">Black Tie Affair</div>
-    <div class="brand-divider"></div>
-  </div>
   <div class="progress" id="progress"></div>
   <div id="container"></div>
 </div>
 <script>
-const TALLY_FORM_URL = 'https://tally.so/r/YOUR_FORM_ID';
-const steps = [
-  { id: 'fit', label: 'Step 1 of 5', title: 'Choose your fit', cols: 'two', options: [{ id: 'classic', name: 'Classic Fit', desc: 'Traditional silhouette with room to move' }, { id: 'slim', name: 'Slim Fit', desc: 'Modern tailored cut that follows the body' }] },
-  { id: 'lapel', label: 'Step 2 of 5', title: 'Select your lapel style', cols: 'three', options: [{ id: 'notch', name: 'Notch Lapel', desc: 'Classic and versatile' }, { id: 'peak', name: 'Peak Lapel', desc: 'Bold and distinguished' }, { id: 'shawl', name: 'Shawl Lapel', desc: 'Elegant and formal' }] },
-  { id: 'color', label: 'Step 3 of 5', title: 'Pick your color', cols: 'three', options: [{ id: 'black', name: 'Classic Black', desc: 'Timeless and authoritative' }, { id: 'midnight', name: 'Midnight Blue', desc: 'Modern and sophisticated' }, { id: 'white', name: 'White Jacket', desc: 'Bold and tropical' }] },
-  { id: 'neckwear', label: 'Step 4 of 5', title: 'Choose your neckwear', cols: 'two', options: [{ id: 'bowtie', name: 'Bow Tie', desc: 'Traditional and formal' }, { id: 'necktie', name: 'Neck Tie', desc: 'Classic and refined' }] },
-  { id: 'waist', label: 'Step 5 of 5', title: 'Vest or cummerbund?', cols: 'two', options: [{ id: 'vest', name: 'Vest', desc: 'Full coverage, layered look' }, { id: 'cummerbund', name: 'Cummerbund Sash', desc: 'Sleek waistband detail' }] }
-];
-const svgs = {
-  classic: `<svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="4" width="36" height="48" rx="5" stroke="currentColor" stroke-width="2"/><line x1="30" y1="4" x2="30" y2="52" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="52" width="44" height="24" rx="3" stroke="currentColor" stroke-width="2"/></svg>`,
-  slim: `<svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="17" y="4" width="26" height="48" rx="5" stroke="currentColor" stroke-width="2"/><line x1="30" y1="4" x2="30" y2="52" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="52" width="34" height="24" rx="3" stroke="currentColor" stroke-width="2"/></svg>`,
-  notch: `<svg viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 5 L28 22 L30 18 L32 22 L45 5 L48 5 L48 65 L12 65 L12 5 Z" stroke="currentColor" stroke-width="2"/><line x1="30" y1="22" x2="30" y2="65" stroke="currentColor" stroke-width="1.5"/></svg>`,
-  peak: `<svg viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 5 L30 28 L42 5 L52 16 L40 28 L46 65 L14 65 L20 28 L8 16 Z" stroke="currentColor" stroke-width="2"/><line x1="30" y1="28" x2="30" y2="65" stroke="currentColor" stroke-width="1.5"/></svg>`,
-  shawl: `<svg viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 5 Q30 35 30 35 Q30 35 42 5 L46 65 L14 65 Z" stroke="currentColor" stroke-width="2"/><line x1="30" y1="35" x2="30" y2="65" stroke="currentColor" stroke-width="1.5"/></svg>`,
-  black: `<svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="44" height="64" rx="5" fill="currentColor" opacity="0.85"/><line x1="30" y1="8" x2="30" y2="72" stroke="white" stroke-width="1" opacity="0.3"/></svg>`,
-  midnight: `<svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="44" height="64" rx="5" fill="currentColor" opacity="0.45"/><rect x="8" y="8" width="44" height="64" rx="5" stroke="currentColor" stroke-width="2"/></svg>`,
-  white: `<svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="44" height="64" rx="5" stroke="currentColor" stroke-width="2"/><line x1="30" y1="8" x2="30" y2="72" stroke="currentColor" stroke-width="1.5" opacity="0.4"/></svg>`,
-  bowtie: `<svg viewBox="0 0 80 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 8 L36 25 L8 42 Z" stroke="currentColor" stroke-width="2"/><path d="M72 8 L44 25 L72 42 Z" stroke="currentColor" stroke-width="2"/><circle cx="40" cy="25" r="6" stroke="currentColor" stroke-width="2"/></svg>`,
-  necktie: `<svg viewBox="0 0 40 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 5 L26 5 L32 32 L20 75 L8 32 Z" stroke="currentColor" stroke-width="2"/></svg>`,
-  vest: `<svg viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="4" width="40" height="72" rx="5" stroke="currentColor" stroke-width="2"/><line x1="30" y1="4" x2="30" y2="76" stroke="currentColor" stroke-width="1.5"/><circle cx="30" cy="24" r="2.5" fill="currentColor"/><circle cx="30" cy="40" r="2.5" fill="currentColor"/><circle cx="30" cy="56" r="2.5" fill="currentColor"/></svg>`,
-  cummerbund: `<svg viewBox="0 0 80 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="8" width="72" height="20" rx="4" stroke="currentColor" stroke-width="2"/><line x1="4" y1="14" x2="76" y2="14" stroke="currentColor" stroke-width="1" opacity="0.4"/><line x1="4" y1="22" x2="76" y2="22" stroke="currentColor" stroke-width="1" opacity="0.4"/></svg>`
-};
-let current = 0;
-const selections = {};
-function renderProgress() {
-  document.getElementById('progress').innerHTML = steps.map((s, i) => {
-    let cls = 'prog-dot';
-    if (i < current) cls += ' done';
-    if (i === current) cls += ' active';
-    return `<div class="${cls}"></div>`;
-  }).join('');
-}
-function renderStep() {
-  if (current >= steps.length) { renderSummary(); return; }
-  const step = steps[current];
-  const sel = selections[step.id];
-  renderProgress();
-  document.getElementById('container').innerHTML = `
-    <div class="step-label">${step.label}</div>
-    <div class="step-title">${step.title}</div>
-    <div class="cards ${step.cols}">
-      ${step.options.map(opt => `
-        <div class="card ${sel === opt.id ? 'selected' : ''}" onclick="select('${opt.id}')">
-          <div class="card-img">${svgs[opt.id] || ''}<div class="card-check">✓</div></div>
-          <div class="card-info"><div class="card-name">${opt.name}</div><div class="card-desc">${opt.desc}</div></div>
-        </div>`).join('')}
-    </div>
-    <div class="actions">
-      <button class="btn-back" onclick="back()" ${current === 0 ? 'style="visibility:hidden"' : ''}>← Back</button>
-      <button class="btn-next" id="nxt" onclick="next()" ${sel ? '' : 'disabled'}>${current === steps.length - 1 ? 'See My Style →' : 'Next →'}</button>
-    </div>`;
-}
-function select(id) {
-  selections[steps[current].id] = id;
-  document.querySelectorAll('.card').forEach(c => c.classList.toggle('selected', c.getAttribute('onclick').includes(`'${id}'`)));
-  document.getElementById('nxt').disabled = false;
-}
-function next() { current++; renderStep(); }
-function back() { if (current > 0) { current--; renderStep(); } }
-function getLabel(stepId, optId) {
-  const step = steps.find(s => s.id === stepId);
-  const opt = step && step.options.find(o => o.id === optId);
-  return opt ? opt.name : optId;
-}
-function renderSummary() {
-  renderProgress();
-  const text = steps.map(s => `${s.id.charAt(0).toUpperCase() + s.id.slice(1)}: ${getLabel(s.id, selections[s.id])}`).join('\n');
-  const params = steps.map(s => `${s.id}=${encodeURIComponent(selections[s.id])}`).join('&');
-  const tallyUrl = TALLY_FORM_URL + (TALLY_FORM_URL.includes('?') ? '&' : '?') + params;
-  document.getElementById('container').innerHTML = `
-    <div class="step-label">Your style profile</div>
-    <div class="step-title">Here's what we'll prepare for you</div>
-    <div class="summary-box">${steps.map(s => `<div class="summary-row"><span class="summary-label">${s.id}</span><span class="summary-val">${getLabel(s.id, selections[s.id])}</span></div>`).join('')}</div>
-    <button class="btn-full" id="copy-btn" onclick="copyText()">Copy My Selections</button>
-    <button class="btn-full" style="background:#1a1a2e;" onclick="window.open('${tallyUrl}','_blank')">Continue to Order Form →</button>
-    <button class="btn-restart" onclick="restart()">Start Over</button>
-    <p class="summary-note">Your selections are saved. Click "Continue to Order Form"<br>to complete your tuxedo rental with Black Tie Affair.</p>`;
-  window._btaText = text;
-}
-function copyText() {
-  navigator.clipboard.writeText(window._btaText || '').then(() => {
-    const btn = document.getElementById('copy-btn');
-    btn.textContent = 'Copied ✓';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy My Selections'; btn.classList.remove('copied'); }, 2000);
-  });
-}
-function restart() { current = 0; Object.keys(selections).forEach(k => delete selections[k]); renderStep(); }
-renderStep();
-</script>
-</body>
-</html>
+const TALLY_FORM_URL = 'https:
